@@ -34,6 +34,7 @@ public class MainActivityFragment extends Fragment {
     //Get popular movies: http://api.themoviedb.org/3/movie/popular?api_key=[]
     //Get top-rated movies: http://api.themoviedb.org/3/movie/top_rated?api_key=[]
     private PosterAdapter mPosterAdapter;
+    private ArrayList<Poster> urlSamples;
     public MainActivityFragment() {
     }
 
@@ -41,7 +42,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
-        ArrayList<Poster> urlSamples= new ArrayList<Poster>();
+        urlSamples= new ArrayList<Poster>();
         //testing
         for (int i=0;i<15;i++) {
             urlSamples.add(new Poster("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
@@ -64,7 +65,7 @@ public class MainActivityFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String moviesJsonStr = null;
             //Please paste your API Key to the constant below
-            final String API_KEY="72f7940738a9f58a23116128df8550be";
+            final String API_KEY="";
             final String API_KEY_LABEL="api_key";
             try {
                 //Implement preference for sortByLater
@@ -93,7 +94,9 @@ public class MainActivityFragment extends Fragment {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
+                //Log.v(TEST_TAG,"movies string below");
                 moviesJsonStr=buffer.toString();
+                //Log.v(TEST_TAG,"moviesstringhere: "+moviesJsonStr);
 
             } catch (IOException e) {
 
