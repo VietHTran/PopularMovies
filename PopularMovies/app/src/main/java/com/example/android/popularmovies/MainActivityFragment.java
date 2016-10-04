@@ -25,9 +25,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -38,7 +40,6 @@ public class MainActivityFragment extends Fragment {
     //Get popular movies: http://api.themoviedb.org/3/movie/popular?api_key=[]
     //Get top-rated movies: http://api.themoviedb.org/3/movie/top_rated?api_key=[]
     private PosterAdapter mPosterAdapter;
-    private ArrayList<Poster> urlSamples;
     public MainActivityFragment() {
     }
     public void updateMovies() {
@@ -51,13 +52,8 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
-        urlSamples= new ArrayList<Poster>();
-        //testing
-        for (int i=0;i<15;i++) {
-            urlSamples.add(new Poster("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
-        }
+        mPosterAdapter= new PosterAdapter(getActivity(), new ArrayList<Poster>());
         updateMovies();
-        mPosterAdapter= new PosterAdapter(getActivity(),urlSamples);
         GridView gridView = (GridView) root.findViewById(R.id.gridview_poster);
         gridView.setAdapter(mPosterAdapter);
         return root;
@@ -151,6 +147,14 @@ public class MainActivityFragment extends Fragment {
                 return null;
             }
         }
-
+        @Override
+        protected void onPostExecute(Poster[] posters) {
+            if (posters!=null) {
+                mPosterAdapter.clear();
+                for (int i=0;i<posters.length;i++) {
+                    mPosterAdapter.add(posters[i]);
+                }
+            }
+        }
     }
 }
