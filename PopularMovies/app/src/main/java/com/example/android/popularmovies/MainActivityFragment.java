@@ -40,25 +40,44 @@ public class MainActivityFragment extends Fragment {
     //Get popular movies: http://api.themoviedb.org/3/movie/popular?api_key=[]
     //Get top-rated movies: http://api.themoviedb.org/3/movie/top_rated?api_key=[]
     private PosterAdapter mPosterAdapter;
-    public MainActivityFragment() {
-    }
+    private ArrayList<Poster> posterList;
+    private final String POSTERS_KEY="posters";
     public void updateMovies() {
         //Implement preference later
         String request="top_rated";
         FetchMoviesTask fmt= new FetchMoviesTask();
         fmt.execute(request);
     }
+    public MainActivityFragment() {
+
+    }
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        bundle.putParcelableArrayList(POSTERS_KEY,posterList);
+        super.onSaveInstanceState(bundle);
+    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //Load saved bundle to ArrayList
+        if (savedInstanceState==null || !savedInstanceState.containsKey(POSTERS_KEY)) {
+            posterList= new ArrayList<Poster>();
+        } else {
+            posterList=savedInstanceState.getParcelableArrayList(POSTERS_KEY);
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
-        mPosterAdapter= new PosterAdapter(getActivity(), new ArrayList<Poster>());
-        updateMovies();
+        mPosterAdapter= new PosterAdapter(getActivity(), posterList);
+        if (savedInstanceState==null || !savedInstanceState.containsKey(POSTERS_KEY)) {
+            updateMovies();
+        }
         GridView gridView = (GridView) root.findViewById(R.id.gridview_poster);
         gridView.setAdapter(mPosterAdapter);
         return root;
     }
-
     public class FetchMoviesTask extends AsyncTask<String, Void, Poster[]> {
         private final String TEST_TAG="Testing";
         private Poster[] getMoviesDataFromJSON(String jsonStr) throws JSONException {
@@ -150,10 +169,11 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(Poster[] posters) {
             if (posters!=null) {
-                mPosterAdapter.clear();
+                posterList.clear();
                 for (int i=0;i<posters.length;i++) {
-                    mPosterAdapter.add(posters[i]);
+                    posterList.add(posters[i]);
                 }
+                //mPosterAdapter= new PosterAdapter(getActivity(), posterList);
             }
         }
     }
