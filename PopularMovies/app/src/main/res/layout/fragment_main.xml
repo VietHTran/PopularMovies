@@ -12,8 +12,7 @@
         android:id="@+id/gridview_poster"
         android:columnWidth="200dp"
         android:numColumns="auto_fit"
-        android:verticalSpacing="15dp"
-        android:horizontalSpacing="5dp"
+        android:verticalSpacing="10dp"
         android:stretchMode="columnWidth"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
