@@ -1,5 +1,6 @@
 package com.example.android.popularmovies;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -54,15 +56,19 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelableArrayList(POSTERS_KEY,posterList);
+        //Log.v("Test","locknload0");
         super.onSaveInstanceState(bundle);
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Load saved bundle to ArrayList
+        //Log.v("Test","locknload");
         if (savedInstanceState==null || !savedInstanceState.containsKey(POSTERS_KEY)) {
+            //Log.v("Test","locknload1");
             posterList= new ArrayList<Poster>();
         } else {
+            //Log.v("Test","locknload2");
             posterList=savedInstanceState.getParcelableArrayList(POSTERS_KEY);
         }
     }
@@ -70,11 +76,21 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
+        //Log.v("Test","loadafterlock2.25");
         mPosterAdapter= new PosterAdapter(getActivity(), posterList);
+        //Log.v("Test","loadafterlock2.5");
         if (savedInstanceState==null || !savedInstanceState.containsKey(POSTERS_KEY)) {
+            //Log.v("Test","loadafterlock3");
             updateMovies();
         }
         GridView gridView = (GridView) root.findViewById(R.id.gridview_poster);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent= new Intent(getActivity(),Details.class);
+                startActivity(intent);
+            }
+        });
         gridView.setAdapter(mPosterAdapter);
         return root;
     }
@@ -103,7 +119,6 @@ public class MainActivityFragment extends Fragment {
                         Double.toString(movie.getDouble(RATING)),
                         movie.getString(DATE));
             }
-            Log.v(TEST_TAG,"teken10");
             return output;
         }
         @Override
@@ -113,7 +128,7 @@ public class MainActivityFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String moviesJsonStr = null;
             //Please paste your API Key to the constant below
-            final String API_KEY="";
+            final String API_KEY="72f7940738a9f58a23116128df8550be";
             final String API_KEY_LABEL="api_key";
             try {
                 //Implement preference for sortByLater
