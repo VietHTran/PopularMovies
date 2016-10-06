@@ -3,4 +3,13 @@
     <string name="title_activity_details">Details</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
+    <string name="fragment_pic_url">URL</string>
+    <string name="fragment_title">TITLE</string>
+    <string name="fragment_plot">PLOT</string>
+    <string name="fragment_rating">RATING</string>
+    <string name="fragment_release_date">DATE</string>
+    <string name="details_title">Title:  </string>
+    <string name="details_plot">Synopsis:  </string>
+    <string name="details_rating">Users rating:  </string>
+    <string name="details_release_date">Release Date:  </string>
 </resources>

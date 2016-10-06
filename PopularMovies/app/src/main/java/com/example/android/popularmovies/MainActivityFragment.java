@@ -102,6 +102,11 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent= new Intent(getActivity(),Details.class);
+                intent.putExtra(getString(R.string.fragment_pic_url),mPosterAdapter.getItem(position).picUrl)
+                        .putExtra(getString(R.string.fragment_title),mPosterAdapter.getItem(position).title)
+                        .putExtra(getString(R.string.fragment_plot),mPosterAdapter.getItem(position).plot)
+                        .putExtra(getString(R.string.fragment_rating),mPosterAdapter.getItem(position).rating)
+                        .putExtra(getString(R.string.fragment_release_date),mPosterAdapter.getItem(position).releaseDate);
                 startActivity(intent);
             }
         });
@@ -141,8 +146,12 @@ public class MainActivityFragment extends Fragment {
             BufferedReader reader = null;
             // Will contain the raw JSON response as a string.
             String moviesJsonStr = null;
-            //Please paste your API Key to the constant below
-            final String API_KEY="";
+            /////////////////////////////////////////////////////
+            //                                                 //
+            // Please paste your API Key to the constant below //
+            //                                                 //
+            ////////////////////////////////////////////////////
+            final String API_KEY="72f7940738a9f58a23116128df8550be";
             final String API_KEY_LABEL="api_key";
             try {
                 //Implement preference for sortByLater
@@ -208,8 +217,10 @@ public class MainActivityFragment extends Fragment {
                 //this is the n>1 time
                 {
                     mPosterAdapter.clear();
+                    //posterList.clear();
                     for (int i=0;i<posters.length;i++) {
                         mPosterAdapter.add(posters[i]);
+                        //posterList.add(posters[i]);
                     }
                 }
             }
