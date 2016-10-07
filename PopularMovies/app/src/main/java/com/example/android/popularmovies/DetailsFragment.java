@@ -2,12 +2,14 @@ package com.example.android.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -19,7 +21,12 @@ public class DetailsFragment extends Fragment {
 
     public DetailsFragment() {
     }
-
+    //Check if the device using is tablet
+    public boolean isTablet(Context context) {
+        boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+        boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        return (xlarge || large);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -36,6 +43,11 @@ public class DetailsFragment extends Fragment {
             plot.setText(intent.getStringExtra(getString(R.string.fragment_plot)));
             rating.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
             date.setText(intent.getStringExtra(getString(R.string.fragment_release_date)));
+            //If not tablet then set the layout orientation to vertical for the sake of readability
+            if (!isTablet(getActivity())) {
+                LinearLayout layout=(LinearLayout) root.findViewById(R.id.details_data);
+                layout.setOrientation(LinearLayout.VERTICAL);
+            }
         } else {
             title.setText("???");
             plot.setText("???");
