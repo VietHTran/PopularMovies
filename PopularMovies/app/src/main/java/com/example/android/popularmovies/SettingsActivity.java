@@ -6,6 +6,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 
 public class SettingsActivity extends PreferenceActivity

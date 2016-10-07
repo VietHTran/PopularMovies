@@ -48,19 +48,23 @@ public class MainActivityFragment extends Fragment {
     private PosterAdapter mPosterAdapter;
     private ArrayList<Poster> posterList;
     private final String POSTERS_KEY="posters";
-    private String sortType="";
-    public void updateMovies() {
-        if (sortType.equals("")) {
-            sortType= PreferenceManager.getDefaultSharedPreferences(getActivity())
-                    .getString(getString(R.string.pref_key_sort),getString(R.string.pref_top_rated));
-        }
+    private String sortType;
+    private void updateMovies() {
+        sortType=getNewSortType();
         FetchMoviesTask fmt= new FetchMoviesTask();
         fmt.execute(sortType);
     }
-    public MainActivityFragment() {
-
+    private String getNewSortType(){
+        return PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_key_sort),getString(R.string.pref_top_rated));
     }
-
+    public MainActivityFragment() {
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateMovies();
+    }
     //Setup the menu call by setHasOptionsMenu(true);
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
@@ -93,6 +97,7 @@ public class MainActivityFragment extends Fragment {
             posterList=savedInstanceState.getParcelableArrayList(POSTERS_KEY);
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
