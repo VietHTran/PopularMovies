@@ -13,4 +13,10 @@
     <string name="details_plot">Synopsis:  </string>
     <string name="details_rating">Users rating:  </string>
     <string name="details_release_date">Release Date:  </string>
+    <string name="pref_label_top_rated">Top Rated</string>
+    <string name="pref_label_popular">Most Popular</string>
+    <string name="pref_top_rated">top_rated</string>
+    <string name="pref_popular">popular</string>
+    <string name="pref_label_sort">Sort By</string>
+    <string name="pref_key_sort">sort_by</string>
 </resources>

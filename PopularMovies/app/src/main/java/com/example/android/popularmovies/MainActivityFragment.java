@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.JsonWriter;
@@ -47,11 +48,14 @@ public class MainActivityFragment extends Fragment {
     private PosterAdapter mPosterAdapter;
     private ArrayList<Poster> posterList;
     private final String POSTERS_KEY="posters";
+    private String sortType="";
     public void updateMovies() {
-        //Implement preference later
-        String request="top_rated";
+        if (sortType.equals("")) {
+            sortType= PreferenceManager.getDefaultSharedPreferences(getActivity())
+                    .getString(getString(R.string.pref_key_sort),getString(R.string.pref_top_rated));
+        }
         FetchMoviesTask fmt= new FetchMoviesTask();
-        fmt.execute(request);
+        fmt.execute(sortType);
     }
     public MainActivityFragment() {
 
