@@ -133,7 +133,9 @@ public class MainActivityFragment extends Fragment {
             final String OVERVIEW="overview";
             final String RATING="vote_average";
             final String DATE="release_date";
-
+            if (jsonStr==null) {
+                throw new JSONException("Null JSON String");
+            }
             JSONObject jsonObject= new JSONObject(jsonStr);
             JSONArray results= jsonObject.getJSONArray(RESULTS);
             Poster[] output= new Poster[results.length()];
@@ -191,7 +193,7 @@ public class MainActivityFragment extends Fragment {
                 moviesJsonStr=buffer.toString();
 
             } catch (IOException e) {
-                Log.v(TEST_TAG,"Error IO",e);
+                Log.v(TEST_TAG,"Error IO Connect",e);
             } finally {
                 if (urlConnection!=null) {
                     urlConnection.disconnect();
@@ -210,8 +212,8 @@ public class MainActivityFragment extends Fragment {
                 //Get JSON Exception later
                 Log.e("ERROR", "JSON Error", e);
                 e.printStackTrace();
-                return null;
             }
+            return null;
         }
         @Override
         protected void onPostExecute(Poster[] posters) {
