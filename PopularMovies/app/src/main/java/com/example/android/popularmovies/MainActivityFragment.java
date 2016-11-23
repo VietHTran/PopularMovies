@@ -111,11 +111,13 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent= new Intent(getActivity(),Details.class);
-                intent.putExtra(getString(R.string.fragment_pic_url),mPosterAdapter.getItem(position).picUrl)
-                        .putExtra(getString(R.string.fragment_title),mPosterAdapter.getItem(position).title)
-                        .putExtra(getString(R.string.fragment_plot),mPosterAdapter.getItem(position).plot)
-                        .putExtra(getString(R.string.fragment_rating),mPosterAdapter.getItem(position).rating)
-                        .putExtra(getString(R.string.fragment_release_date),mPosterAdapter.getItem(position).releaseDate);
+                Poster poster=mPosterAdapter.getItem(position);
+                intent.putExtra(getString(R.string.fragment_pic_url),poster.picUrl)
+                        .putExtra(getString(R.string.fragment_title),poster.title)
+                        .putExtra(getString(R.string.fragment_plot),poster.plot)
+                        .putExtra(getString(R.string.fragment_rating),poster.rating)
+                        .putExtra(getString(R.string.fragment_release_date),poster.releaseDate)
+                        .putExtra(getString(R.string.fragment_id),poster.id);
                 startActivity(intent);
             }
         });
@@ -164,7 +166,7 @@ public class MainActivityFragment extends Fragment {
             // Please paste your API Key to the constant below //
             //                                                 //
             ////////////////////////////////////////////////////
-            final String API_KEY=" ";
+            final String API_KEY="72f7940738a9f58a23116128df8550be";
             final String API_KEY_LABEL="api_key";
             try {
                 //Implement preference for sortByLater

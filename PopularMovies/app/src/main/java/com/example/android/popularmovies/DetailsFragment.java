@@ -35,14 +35,16 @@ public class DetailsFragment extends Fragment {
         ImageView poster= (ImageView) root.findViewById(R.id.details_poster);
         TextView title=(TextView) root.findViewById(R.id.details_title);
         TextView plot=(TextView) root.findViewById(R.id.details_plot);
-        TextView rating=(TextView) root.findViewById(R.id.details_rating);
+        TextView ratingView=(TextView) root.findViewById(R.id.details_rating);
         TextView date=(TextView) root.findViewById(R.id.details_release_date);
         if (intent!=null) {
             Picasso.with(getActivity()).load(intent.getStringExtra(getString(R.string.fragment_pic_url))).into(poster);
             title.setText(intent.getStringExtra(getString(R.string.fragment_title)));
             plot.setText(intent.getStringExtra(getString(R.string.fragment_plot)));
-            rating.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
-            date.setText(intent.getStringExtra(getString(R.string.fragment_release_date)));
+            String rating=Utility.reformatRating(intent.getStringExtra(getString(R.string.fragment_rating)));
+            ratingView.setText(getActivity().getString(R.string.format_rating,rating));
+            //rating.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
+            date.setText(Utility.reformatDate(intent.getStringExtra(getString(R.string.fragment_release_date))));
             //If not tablet then set the layout orientation to vertical for the sake of readability
             if (!isTablet(getActivity())) {
                 LinearLayout layout=(LinearLayout) root.findViewById(R.id.details_data);
@@ -51,7 +53,7 @@ public class DetailsFragment extends Fragment {
         } else {
             title.setText("???");
             plot.setText("???");
-            rating.setText("???");
+            ratingView.setText("???");
             date.setText("???");
         }
         return root;
