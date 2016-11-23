@@ -133,6 +133,7 @@ public class MainActivityFragment extends Fragment {
             final String OVERVIEW="overview";
             final String RATING="vote_average";
             final String DATE="release_date";
+            final String ID="id";
             if (jsonStr==null) {
                 throw new JSONException("Null JSON String");
             }
@@ -147,7 +148,8 @@ public class MainActivityFragment extends Fragment {
                         movie.getString(TITLE),
                         movie.getString(OVERVIEW),
                         Double.toString(movie.getDouble(RATING)),
-                        movie.getString(DATE));
+                        movie.getString(DATE),
+                        movie.getInt(ID));
             }
             return output;
         }
@@ -162,7 +164,7 @@ public class MainActivityFragment extends Fragment {
             // Please paste your API Key to the constant below //
             //                                                 //
             ////////////////////////////////////////////////////
-            final String API_KEY="";
+            final String API_KEY=" ";
             final String API_KEY_LABEL="api_key";
             try {
                 //Implement preference for sortByLater
