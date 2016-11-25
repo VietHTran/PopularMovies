@@ -166,7 +166,7 @@ public class MainActivityFragment extends Fragment {
             // Please paste your API Key to the constant below //
             //                                                 //
             ////////////////////////////////////////////////////
-            final String API_KEY="";
+            final String API_KEY=" ";
             final String API_KEY_LABEL="api_key";
             try {
                 //Implement preference for sortByLater
