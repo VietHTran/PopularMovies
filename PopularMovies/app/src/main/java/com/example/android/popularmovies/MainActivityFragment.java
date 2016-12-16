@@ -1,11 +1,18 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +27,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.example.android.popularmovies.data.PosterContract;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -36,11 +44,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     //
     //Get popular movies: http://api.themoviedb.org/3/movie/popular?api_key=[]
@@ -48,15 +57,18 @@ public class MainActivityFragment extends Fragment {
     private PosterAdapter mPosterAdapter;
     private ArrayList<Poster> posterList;
     private final String POSTERS_KEY="posters";
+    private static final int CURSOR_LOADER_ID = 0;
     private String sortType;
     private void updateMovies() {
         sortType=getNewSortType();
         FetchMoviesTask fmt= new FetchMoviesTask();
+        Log.v("test","sorttype "+sortType);
         fmt.execute(sortType);
     }
     private String getNewSortType(){
+        Context context=getActivity();
         return PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .getString(getString(R.string.pref_key_sort),getString(R.string.pref_top_rated));
+                .getString(context.getString(R.string.pref_key_sort),context.getString(R.string.pref_top_rated));
     }
     public MainActivityFragment() {
     }
@@ -102,7 +114,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
-        mPosterAdapter= new PosterAdapter(getActivity(), posterList);
+        mPosterAdapter= new PosterAdapter(getActivity(), null,0,CURSOR_LOADER_ID);
         if (savedInstanceState==null || !savedInstanceState.containsKey(POSTERS_KEY)) {
             updateMovies();
         }
@@ -111,7 +123,10 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent= new Intent(getActivity(),Details.class);
-                Poster poster=mPosterAdapter.getItem(position);
+                int uriId = position + 1;
+                Uri uri = ContentUris.withAppendedId(PosterContract.PosterEntry.CONTENT_URI,
+                        uriId);
+                Poster poster=(Poster) mPosterAdapter.getItem(position);
                 intent.putExtra(getString(R.string.fragment_pic_url),poster.picUrl)
                         .putExtra(getString(R.string.fragment_title),poster.title)
                         .putExtra(getString(R.string.fragment_plot),poster.plot)
@@ -124,6 +139,43 @@ public class MainActivityFragment extends Fragment {
         gridView.setAdapter(mPosterAdapter);
         return root;
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(),
+                PosterContract.PosterEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mPosterAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+//    @Override
+//    public void onActivityCreated(Bundle bundle) {
+//        getLoaderManager().initLoader(CURSOR_LOADER_ID,null,this);
+//        Cursor c=getActivity().getContentResolver()
+//                .query(PosterContract.PosterEntry.CONTENT_URI
+//                        ,new String[]{PosterContract.PosterEntry._ID},null,null,null);
+//        if (c.getCount()==0) {
+//
+//        }
+//    }
+//    public void insertData() {
+//        ContentValues[] contentValues=new ContentValues[posterList.size()];
+//        for (int i=0;i<contentValues.length;i++) {
+//            Poster holder=posterList.get(i);
+//
+//        }
+//    }
     public class FetchMoviesTask extends AsyncTask<String, Void, Poster[]> {
         private final String TEST_TAG="Testing";
         private Poster[] getMoviesDataFromJSON(String jsonStr) throws JSONException {
@@ -142,6 +194,7 @@ public class MainActivityFragment extends Fragment {
             JSONObject jsonObject= new JSONObject(jsonStr);
             JSONArray results= jsonObject.getJSONArray(RESULTS);
             Poster[] output= new Poster[results.length()];
+            Vector<ContentValues> cVVector = new Vector<ContentValues>();
             for (int i=0;i<results.length();i++) {
                 JSONObject movie= results.getJSONObject(i);
                 StringBuilder builder= new StringBuilder(ORIGINAL_LINK);
@@ -152,6 +205,21 @@ public class MainActivityFragment extends Fragment {
                         Double.toString(movie.getDouble(RATING)),
                         movie.getString(DATE),
                         movie.getInt(ID));
+                ContentValues contentValues=new ContentValues();
+                contentValues.put(PosterContract.PosterEntry.COLUMN_TITLE,output[i].title);
+                contentValues.put(PosterContract.PosterEntry.COLUMN_PLOT,output[i].plot);
+                contentValues.put(PosterContract.PosterEntry.COLUMN_PIC_URL,output[i].picUrl);
+                contentValues.put(PosterContract.PosterEntry.COLUMN_RATING,output[i].rating);
+                contentValues.put(PosterContract.PosterEntry.COLUMN_RELEASE_DATE,output[i].releaseDate);
+                contentValues.put(PosterContract.PosterEntry.COLUMN_IS_FAVORITE,0);
+                contentValues.put(PosterContract.PosterEntry.COLUMN_SORT_TYPE,sortType);
+                contentValues.put(PosterContract.PosterEntry.COLUMN_TITLE,output[i].title);
+                cVVector.add(contentValues);
+            }
+            if (cVVector.size()!=0) {
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                getActivity().getContentResolver().bulkInsert(PosterContract.PosterEntry.CONTENT_URI, cvArray);
             }
             return output;
         }
@@ -166,7 +234,7 @@ public class MainActivityFragment extends Fragment {
             // Please paste your API Key to the constant below //
             //                                                 //
             ////////////////////////////////////////////////////
-            final String API_KEY=" ";
+            final String API_KEY="72f7940738a9f58a23116128df8550be";
             final String API_KEY_LABEL="api_key";
             try {
                 //Implement preference for sortByLater
@@ -174,6 +242,7 @@ public class MainActivityFragment extends Fragment {
                 Uri uri= new Uri.Builder().scheme("http").authority("api.themoviedb.org").appendPath("3").appendPath("movie").appendPath(sortBy)
                         .appendQueryParameter(API_KEY_LABEL,API_KEY)
                         .build();
+                Log.v("test","thisisuri "+uri.toString());
                 URL url = new URL(uri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -231,11 +300,11 @@ public class MainActivityFragment extends Fragment {
                 } else
                 //this is the n>1 time
                 {
-                    mPosterAdapter.clear();
-                    //posterList.clear();
+                    //mPosterAdapter.clear();
+                    posterList.clear();
                     for (int i=0;i<posters.length;i++) {
-                        mPosterAdapter.add(posters[i]);
-                        //posterList.add(posters[i]);
+                        //mPosterAdapter.add(posters[i]);
+                        posterList.add(posters[i]);
                     }
                 }
             }

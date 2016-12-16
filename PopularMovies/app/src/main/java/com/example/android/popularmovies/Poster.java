@@ -14,7 +14,7 @@ public class Poster implements Parcelable {
     //Go to video:
     //https://www.youtube.com/watch?v=[TRAILER_KEY]
     public String picUrl,title,plot,rating,releaseDate;
-    public int id;
+    public int id,isFavorite,isPopular;//0 for no, 1 for yes
     public Poster (String u) {
         picUrl=u;
     }
@@ -24,6 +24,7 @@ public class Poster implements Parcelable {
         this.plot=plot;
         this.rating=rating;
         this.releaseDate=releaseDate;
+        this.id=id;
     }
     public Poster (Parcel parcel) {
         picUrl=parcel.readString();

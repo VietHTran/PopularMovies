@@ -21,6 +21,7 @@ public class PosterContract {
         public static final String COLUMN_RELEASE_DATE="release_date";
         public static final String COLUMN_MOVIE_ID="movie_id";
         public static final String COLUMN_SORT_TYPE="sort_type";
+        public static final String COLUMN_IS_FAVORITE="is_favorite";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(POSTER_TABLE).build();
