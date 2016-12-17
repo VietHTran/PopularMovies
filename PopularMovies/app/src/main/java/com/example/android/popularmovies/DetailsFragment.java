@@ -42,7 +42,7 @@ public class DetailsFragment extends Fragment {
             title.setText(intent.getStringExtra(getString(R.string.fragment_title)));
             plot.setText(intent.getStringExtra(getString(R.string.fragment_plot)));
             rating.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
-            date.setText(intent.getStringExtra(getString(R.string.fragment_release_date)));
+            date.setText(intent.getStringExtra(getString(R.string.fragment_release_date)).substring(0,4));
             //If not tablet then set the layout orientation to vertical for the sake of readability
             if (!isTablet(getActivity())) {
                 LinearLayout layout=(LinearLayout) root.findViewById(R.id.details_data);
