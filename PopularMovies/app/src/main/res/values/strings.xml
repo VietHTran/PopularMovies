@@ -9,6 +9,8 @@
     <string name="fragment_plot">PLOT</string>
     <string name="fragment_rating">RATING</string>
     <string name="fragment_release_date">DATE</string>
+    <string name="fragment_id">ID</string>
+    <string name="fragment_favorite">FAVORITE</string>
     <string name="details_title">Title:  </string>
     <string name="details_plot">Synopsis:  </string>
     <string name="details_rating">Users rating:  </string>
@@ -20,5 +22,6 @@
     <string name="pref_label_sort">Sort By</string>
     <string name="pref_key_sort">sort_by</string>
     <string name="details_add_favorite">MARK AS \nFAVORITE</string>
+    <string name="details_remove_favorite">REMOVE FROM \nFAVORITE</string>
     <string name="details_trailer">Trailers:  </string>
 </resources>

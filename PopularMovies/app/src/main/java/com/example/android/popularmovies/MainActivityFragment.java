@@ -115,7 +115,9 @@ public class MainActivityFragment extends Fragment {
                         .putExtra(getString(R.string.fragment_title),mPosterAdapter.getItem(position).title)
                         .putExtra(getString(R.string.fragment_plot),mPosterAdapter.getItem(position).plot)
                         .putExtra(getString(R.string.fragment_rating),mPosterAdapter.getItem(position).rating)
-                        .putExtra(getString(R.string.fragment_release_date),mPosterAdapter.getItem(position).releaseDate);
+                        .putExtra(getString(R.string.fragment_release_date),mPosterAdapter.getItem(position).releaseDate)
+                        .putExtra(getString(R.string.fragment_id),mPosterAdapter.getItem(position).movieId)
+                        .putExtra(getString(R.string.fragment_favorite),mPosterAdapter.getItem(position).isFavorite);
                 startActivity(intent);
             }
         });
