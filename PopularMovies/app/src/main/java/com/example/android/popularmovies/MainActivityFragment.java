@@ -62,7 +62,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private void updateMovies() {
         sortType=getNewSortType();
         FetchMoviesTask fmt= new FetchMoviesTask();
-        Log.v("test","sorttype "+sortType);
         fmt.execute(sortType);
     }
     private String getNewSortType(){
@@ -242,7 +241,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 Uri uri= new Uri.Builder().scheme("http").authority("api.themoviedb.org").appendPath("3").appendPath("movie").appendPath(sortBy)
                         .appendQueryParameter(API_KEY_LABEL,API_KEY)
                         .build();
-                Log.v("test","thisisuri "+uri.toString());
+                Log.v("test",uri.toString());
                 URL url = new URL(uri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
