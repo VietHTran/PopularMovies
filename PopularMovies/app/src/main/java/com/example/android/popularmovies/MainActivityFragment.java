@@ -133,6 +133,7 @@ public class MainActivityFragment extends Fragment {
             final String OVERVIEW="overview";
             final String RATING="vote_average";
             final String DATE="release_date";
+            final String ID="id";
             if (jsonStr==null) {
                 throw new JSONException("Null JSON String");
             }
@@ -147,7 +148,10 @@ public class MainActivityFragment extends Fragment {
                         movie.getString(TITLE),
                         movie.getString(OVERVIEW),
                         Double.toString(movie.getDouble(RATING)),
-                        movie.getString(DATE));
+                        movie.getString(DATE),
+                        movie.getInt(ID),
+                        0);
+                //Log.v("test","thisismovieId "+movie.getInt(ID));
             }
             return output;
         }
@@ -171,6 +175,7 @@ public class MainActivityFragment extends Fragment {
                         .appendQueryParameter(API_KEY_LABEL,API_KEY)
                         .build();
                 URL url = new URL(uri.toString());
+                //Log.v("test","thisisuri "+uri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();

@@ -8,15 +8,18 @@ import android.os.Parcelable;
  */
 public class Poster implements Parcelable {
     public String picUrl,title,plot,rating,releaseDate;
+    public int movieId,isFavorite; // 0(false), 1(true)
     public Poster (String u) {
         picUrl=u;
     }
-    public Poster (String picUrl,String title,String plot,String rating, String releaseDate) {
+    public Poster (String picUrl,String title,String plot,String rating, String releaseDate,int movieId, int isFavorite) {
         this.picUrl=picUrl;
         this.title=title;
         this.plot=plot;
         this.rating=rating;
         this.releaseDate=releaseDate;
+        this.movieId=movieId;
+        this.isFavorite=isFavorite;
     }
     public Poster (Parcel parcel) {
         picUrl=parcel.readString();
@@ -24,6 +27,8 @@ public class Poster implements Parcelable {
         plot=parcel.readString();
         rating=parcel.readString();
         releaseDate=parcel.readString();
+        movieId=parcel.readInt();
+        isFavorite=parcel.readInt();
     }
     @Override
     public int describeContents() {
@@ -36,6 +41,8 @@ public class Poster implements Parcelable {
         d.writeString(plot);
         d.writeString(rating);
         d.writeString(releaseDate);
+        d.writeInt(movieId);
+        d.writeInt(isFavorite);
     }
     public  final Parcelable.Creator<Poster> CREATOR= new Parcelable.Creator<Poster>(){
         @Override
