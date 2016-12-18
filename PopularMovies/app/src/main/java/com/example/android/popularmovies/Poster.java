@@ -14,17 +14,17 @@ public class Poster implements Parcelable {
     //Go to video:
     //https://www.youtube.com/watch?v=[TRAILER_KEY]
     public String picUrl,title,plot,rating,releaseDate;
-    public int id,isFavorite,isPopular;//0 for no, 1 for yes
+    public int movieId; // 0(false), 1(true)
     public Poster (String u) {
         picUrl=u;
     }
-    public Poster (String picUrl,String title,String plot,String rating, String releaseDate,int id) {
+    public Poster (String picUrl,String title,String plot,String rating, String releaseDate,int movieId) {
         this.picUrl=picUrl;
         this.title=title;
         this.plot=plot;
         this.rating=rating;
         this.releaseDate=releaseDate;
-        this.id=id;
+        this.movieId=movieId;
     }
     public Poster (Parcel parcel) {
         picUrl=parcel.readString();
@@ -32,7 +32,7 @@ public class Poster implements Parcelable {
         plot=parcel.readString();
         rating=parcel.readString();
         releaseDate=parcel.readString();
-        id=parcel.readInt();
+        movieId=parcel.readInt();
     }
     @Override
     public int describeContents() {
@@ -45,7 +45,7 @@ public class Poster implements Parcelable {
         d.writeString(plot);
         d.writeString(rating);
         d.writeString(releaseDate);
-        d.writeInt(id);
+        d.writeInt(movieId);
     }
     public  final Parcelable.Creator<Poster> CREATOR= new Parcelable.Creator<Poster>(){
         @Override

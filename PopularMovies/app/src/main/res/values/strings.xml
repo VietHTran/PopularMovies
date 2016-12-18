@@ -11,18 +11,21 @@
     <string name="fragment_rating">RATING</string>
     <string name="fragment_release_date">DATE</string>
     <string name="fragment_id">ID</string>
+    <string name="fragment_favorite">FAVORITE</string>
     <string name="details_title">Title:  </string>
     <string name="details_plot">Synopsis:  </string>
     <string name="details_rating">Users rating:  </string>
-    <string name="details_add_favorite">MARK AS \nFAVORITE</string>
     <string name="details_release_date">Release Date:  </string>
-    <string name="details_trailer">Trailers:  </string>
     <string name="pref_label_top_rated">Top Rated</string>
     <string name="pref_label_popular">Most Popular</string>
+    <string name="pref_label_favorite">Favorites</string>
     <string name="pref_top_rated">top_rated</string>
     <string name="pref_popular">popular</string>
+    <string name="pref_favorite">favorite</string>
     <string name="pref_label_sort">Sort By</string>
     <string name="pref_key_sort">sort_by</string>
-    <string name="format_rating"><xliff:g id="rating">%1$s</xliff:g>/10</string>
-    <string name="content_authority">com.example.android.popularmovies</string>
+    <string name="details_add_favorite">MARK AS \nFAVORITE</string>
+    <string name="details_remove_favorite">REMOVE FROM \nFAVORITE</string>
+    <string name="details_trailer">Trailers:  </string>
+    <string name="details_reviews">Reviews:  </string>
 </resources>
