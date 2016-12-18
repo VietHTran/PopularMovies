@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -37,7 +39,8 @@ public class DetailsFragment extends Fragment {
 
     private int movieId;
     private final String YOUTUBE_URL_PREFIX="https://www.youtube.com/watch?v=";
-    private ArrayList<String> trailerList;
+    private ArrayList<Trailer> trailerList;
+    private TrailerAdapter mTrailerAdapter;
     public DetailsFragment() {
     }
     private void getTrailerAsync() {
@@ -54,7 +57,6 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Use savedInstanceState later
-        trailerList= new ArrayList<String>();
 
         View root= inflater.inflate(R.layout.fragment_details, container, false);
         Intent intent=getActivity().getIntent();
@@ -76,6 +78,7 @@ public class DetailsFragment extends Fragment {
                     ? getString(R.string.details_add_favorite): getString(R.string.details_remove_favorite));
 
             movieId=intent.getIntExtra(getString(R.string.fragment_id),0);
+            Log.v("test","thisismovieid "+intent.getIntExtra(getString(R.string.fragment_id),0));
             //If not tablet then set the layout orientation to vertical for the sake of readability
             if (!isTablet(getActivity())) {
                 LinearLayout layout=(LinearLayout) root.findViewById(R.id.details_data);
@@ -87,12 +90,29 @@ public class DetailsFragment extends Fragment {
             plot.setText("???");
             rating.setText("???");
             date.setText("???");
+            movieId=0;
         }
+
+        trailerList= new ArrayList<Trailer>();
+        mTrailerAdapter= new TrailerAdapter(getActivity(),trailerList);
+        getTrailerAsync();
+
+        ListView trailersView = (ListView) root.findViewById(R.id.details_trailer);
+        trailersView.setScrollContainer(false);
+        trailersView.setAdapter(mTrailerAdapter);
+        trailersView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Trailer trailer=mTrailerAdapter.getItem(position);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_URL_PREFIX+trailer.url)));
+            }
+        });
+
         return root;
     }
-    public class FetchTrailersTask extends AsyncTask<String, Void, String[]> {
+    public class FetchTrailersTask extends AsyncTask<String, Void, Trailer[]> {
         private final String TEST_TAG="Testing";
-        private String[] getTrailersURLFromJSON(String jsonStr) throws JSONException {
+        private Trailer[] getTrailersURLFromJSON(String jsonStr) throws JSONException {
             //JSON Keys
             final String RESULTS="results";
             final String KEY="key";
@@ -101,16 +121,16 @@ public class DetailsFragment extends Fragment {
             }
             JSONObject jsonObject= new JSONObject(jsonStr);
             JSONArray results= jsonObject.getJSONArray(RESULTS);
-            String[] output= new String[results.length()];
+            Trailer[] output= new Trailer[results.length()];
             for (int i=0;i<results.length();i++) {
                 JSONObject trailer= results.getJSONObject(i);
-                output[i]=trailer.getString(KEY);
+                output[i]=new Trailer(trailer.getString(KEY));
                 //Log.v(TEST_TAG,"thisistrailer: "+trailer.getString(KEY));
             }
             return output;
         }
         @Override
-        protected String[] doInBackground(String... request) {
+        protected Trailer[] doInBackground(String... request) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             // Will contain the raw JSON response as a string.
@@ -178,7 +198,7 @@ public class DetailsFragment extends Fragment {
             return null;
         }
         @Override
-        protected void onPostExecute(String[] urls) {
+        protected void onPostExecute(Trailer[] urls) {
             if (urls!=null) {
                 //this is the first time
                 if (trailerList.size()==0) {
@@ -189,10 +209,12 @@ public class DetailsFragment extends Fragment {
                 } else
                 //this is the n>1 time
                 {
-//                    mTrailAdapter.clear();
-//                    for (int i=0;i<urls.length;i++) {
-//                        mTrailerAdapter.add(urls[i]);
-//                    }
+                    trailerList.clear();
+                    mTrailerAdapter.clear();
+                    for (int i=0;i<urls.length;i++) {
+                        mTrailerAdapter.add(urls[i]);
+                        trailerList.add(urls[i]);
+                    }
                 }
             }
         }
