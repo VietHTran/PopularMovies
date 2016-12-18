@@ -130,6 +130,21 @@
                 android:paddingLeft="10dp"
                 android:id="@+id/details_trailer">
             </ListView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/details_reviews"
+                android:textSize="@dimen/abc_text_size_headline_material"
+                android:paddingTop="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="10dp"/>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:id="@+id/details_review">
+            </ListView>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
