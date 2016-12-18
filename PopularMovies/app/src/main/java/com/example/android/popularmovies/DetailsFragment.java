@@ -38,6 +38,7 @@ import java.util.ArrayList;
 public class DetailsFragment extends Fragment {
 
     private int movieId;
+    public static Poster currentPoster;
     private final String YOUTUBE_URL_PREFIX="https://www.youtube.com/watch?v=";
     private ArrayList<Trailer> trailerList;
     private TrailerAdapter mTrailerAdapter;
@@ -71,7 +72,7 @@ public class DetailsFragment extends Fragment {
         TextView plot=(TextView) root.findViewById(R.id.details_plot);
         TextView rating=(TextView) root.findViewById(R.id.details_rating);
         TextView date=(TextView) root.findViewById(R.id.details_release_date);
-        Button addFavorite=(Button) root.findViewById(R.id.details_add_favorite);
+        final Button addFavorite=(Button) root.findViewById(R.id.details_add_favorite);
 
         if (intent!=null) {
 
@@ -80,17 +81,32 @@ public class DetailsFragment extends Fragment {
             plot.setText(intent.getStringExtra(getString(R.string.fragment_plot)));
             rating.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
             date.setText(intent.getStringExtra(getString(R.string.fragment_release_date)).substring(0,4));
-            addFavorite.setText(intent.getIntExtra(getString(R.string.fragment_favorite),0)==0
-                    ? getString(R.string.details_add_favorite): getString(R.string.details_remove_favorite));
 
             movieId=intent.getIntExtra(getString(R.string.fragment_id),0);
             //Log.v("test","thisismovieid "+intent.getIntExtra(getString(R.string.fragment_id),0));
+
+            addFavorite.setText(Favorite.favorites.containsKey(movieId)?
+                    getString(R.string.details_remove_favorite) :
+                    getString(R.string.details_add_favorite));
+            addFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Favorite.favorites.containsKey(movieId)) {
+                        Favorite.favoriteList.remove(currentPoster);
+                        Favorite.favorites.remove(movieId);
+                        addFavorite.setText(getString(R.string.details_add_favorite));
+                    } else {
+                        Favorite.favoriteList.add(currentPoster);
+                        Favorite.favorites.put(movieId,currentPoster);
+                        addFavorite.setText(getString(R.string.details_remove_favorite));
+                    }
+                }
+            });
             //If not tablet then set the layout orientation to vertical for the sake of readability
             if (!isTablet(getActivity())) {
                 LinearLayout layout=(LinearLayout) root.findViewById(R.id.details_data);
                 layout.setOrientation(LinearLayout.VERTICAL);
             }
-            getTrailerAsync();
         } else {
             title.setText("???");
             plot.setText("???");

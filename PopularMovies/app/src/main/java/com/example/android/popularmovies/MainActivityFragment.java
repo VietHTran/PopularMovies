@@ -80,7 +80,7 @@ public class MainActivityFragment extends Fragment {
         }
         return true;
     }
-    //Save downloaded data in case of rotation
+    //Save downloaded data in case of rotations
     @Override
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putParcelableArrayList(POSTERS_KEY,posterList);
@@ -110,14 +110,15 @@ public class MainActivityFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Poster poster=mPosterAdapter.getItem(position);
                 Intent intent= new Intent(getActivity(),Details.class);
-                intent.putExtra(getString(R.string.fragment_pic_url),mPosterAdapter.getItem(position).picUrl)
-                        .putExtra(getString(R.string.fragment_title),mPosterAdapter.getItem(position).title)
-                        .putExtra(getString(R.string.fragment_plot),mPosterAdapter.getItem(position).plot)
-                        .putExtra(getString(R.string.fragment_rating),mPosterAdapter.getItem(position).rating)
-                        .putExtra(getString(R.string.fragment_release_date),mPosterAdapter.getItem(position).releaseDate)
-                        .putExtra(getString(R.string.fragment_id),mPosterAdapter.getItem(position).movieId)
-                        .putExtra(getString(R.string.fragment_favorite),mPosterAdapter.getItem(position).isFavorite);
+                intent.putExtra(getString(R.string.fragment_pic_url),poster.picUrl)
+                        .putExtra(getString(R.string.fragment_title),poster.title)
+                        .putExtra(getString(R.string.fragment_plot),poster.plot)
+                        .putExtra(getString(R.string.fragment_rating),poster.rating)
+                        .putExtra(getString(R.string.fragment_release_date),poster.releaseDate)
+                        .putExtra(getString(R.string.fragment_id),poster.movieId);
+                DetailsFragment.currentPoster=poster;
                 startActivity(intent);
             }
         });
@@ -151,8 +152,7 @@ public class MainActivityFragment extends Fragment {
                         movie.getString(OVERVIEW),
                         Double.toString(movie.getDouble(RATING)),
                         movie.getString(DATE),
-                        movie.getInt(ID),
-                        0);
+                        movie.getInt(ID));
                 //Log.v("test","thisismovieId "+movie.getInt(ID));
             }
             return output;
@@ -173,6 +173,13 @@ public class MainActivityFragment extends Fragment {
             try {
                 //Implement preference for sortByLater
                 String sortBy=request[0];
+                if (sortBy.equals(getString(R.string.pref_favorite))) {
+                    Poster[] posters= new Poster[Favorite.favoriteList.size()];
+                    for (int i=0;i<Favorite.favoriteList.size();i++) {
+                        posters[i]=Favorite.favoriteList.get(i);
+                    }
+                    return posters;
+                }
                 Uri uri= new Uri.Builder().scheme("http").authority("api.themoviedb.org").appendPath("3").appendPath("movie").appendPath(sortBy)
                         .appendQueryParameter(API_KEY_LABEL,API_KEY)
                         .build();
