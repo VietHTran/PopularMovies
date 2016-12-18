@@ -7,6 +7,12 @@ import android.os.Parcelable;
  * Created by Viet on 10/1/2016.
  */
 public class Poster implements Parcelable {
+    //Fetch trailer:
+    //http://api.themoviedb.org/3/movie/284052/videos?api_key[API_KEY]
+    //Fetch reviews:
+    //http://api.themoviedb.org/3/movie/284052/reviews?api_key[API_KEY]
+    //Go to video:
+    //https://www.youtube.com/watch?v=[TRAILER_KEY]
     public String picUrl,title,plot,rating,releaseDate;
     public int movieId; // 0(false), 1(true)
     public Poster (String u) {

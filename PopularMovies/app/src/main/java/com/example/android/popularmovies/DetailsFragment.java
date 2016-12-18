@@ -70,16 +70,15 @@ public class DetailsFragment extends Fragment {
         ImageView poster= (ImageView) root.findViewById(R.id.details_poster);
         TextView title=(TextView) root.findViewById(R.id.details_title);
         TextView plot=(TextView) root.findViewById(R.id.details_plot);
-        TextView rating=(TextView) root.findViewById(R.id.details_rating);
+        TextView ratingView=(TextView) root.findViewById(R.id.details_rating);
         TextView date=(TextView) root.findViewById(R.id.details_release_date);
         final Button addFavorite=(Button) root.findViewById(R.id.details_add_favorite);
 
         if (intent!=null) {
-
             Picasso.with(getActivity()).load(intent.getStringExtra(getString(R.string.fragment_pic_url))).into(poster);
             title.setText(intent.getStringExtra(getString(R.string.fragment_title)));
             plot.setText(intent.getStringExtra(getString(R.string.fragment_plot)));
-            rating.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
+            ratingView.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
             date.setText(intent.getStringExtra(getString(R.string.fragment_release_date)).substring(0,4));
 
             movieId=intent.getIntExtra(getString(R.string.fragment_id),0);
@@ -110,7 +109,7 @@ public class DetailsFragment extends Fragment {
         } else {
             title.setText("???");
             plot.setText("???");
-            rating.setText("???");
+            ratingView.setText("???");
             date.setText("???");
             movieId=0;
         }
