@@ -153,7 +153,7 @@ public class MainActivityFragment extends Fragment {
                         Double.toString(movie.getDouble(RATING)),
                         movie.getString(DATE),
                         movie.getInt(ID));
-                //Log.v("test","thisismovieId "+movie.getInt(ID));
+                //Log.v("test","thisismovieId "+movie.getString(TITLE));
             }
             return output;
         }

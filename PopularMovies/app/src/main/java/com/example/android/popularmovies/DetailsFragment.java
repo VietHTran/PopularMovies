@@ -37,20 +37,25 @@ import java.util.ArrayList;
  */
 public class DetailsFragment extends Fragment {
 
-    private int movieId;
     public static Poster currentPoster;
+    private int movieId;
     private final String YOUTUBE_URL_PREFIX="https://www.youtube.com/watch?v=";
+    private final String TRAILER_KEY="trailer";
+    private final String REVIEW_KEY="review";
     private ArrayList<Trailer> trailerList;
     private TrailerAdapter mTrailerAdapter;
     private ArrayList<Review> reviewList;
     private ReviewAdapter mReviewAdapter;
+
     public DetailsFragment() {
     }
     private void getTrailerAsync() {
+        if (trailerList.size()==0) return;
         FetchTrailersTask ftt= new FetchTrailersTask();
         ftt.execute(Integer.toString(movieId));
     }
     private void getReviewAsync () {
+        if (reviewList.size()==0) return;
         FetchReviewsTask frt= new FetchReviewsTask();
         frt.execute(Integer.toString(movieId));
     }
@@ -60,10 +65,18 @@ public class DetailsFragment extends Fragment {
         boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
         return (xlarge || large);
     }
+
+    //Save downloaded data in case of rotations
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        bundle.putParcelableArrayList(TRAILER_KEY,trailerList);
+        bundle.putParcelableArrayList(REVIEW_KEY,reviewList);
+        super.onSaveInstanceState(bundle);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //Use savedInstanceState later
 
         View root= inflater.inflate(R.layout.fragment_details, container, false);
         Intent intent=getActivity().getIntent();
@@ -114,7 +127,16 @@ public class DetailsFragment extends Fragment {
             movieId=0;
         }
 
-        trailerList= new ArrayList<Trailer>();
+        if (savedInstanceState!=null&&savedInstanceState.containsKey(TRAILER_KEY)) {
+            //Log.d("test","isDataSaved");
+            trailerList=savedInstanceState.getParcelableArrayList(TRAILER_KEY);
+            reviewList=savedInstanceState.getParcelableArrayList(REVIEW_KEY);
+        } else {
+            //Log.d("test","isDataSavedNot");
+            trailerList= new ArrayList<Trailer>();
+            reviewList= new ArrayList<Review>();
+        }
+
         mTrailerAdapter= new TrailerAdapter(getActivity(),trailerList);
         getTrailerAsync();
 
@@ -128,7 +150,6 @@ public class DetailsFragment extends Fragment {
             }
         });
 
-        reviewList= new ArrayList<Review>();
         mReviewAdapter= new ReviewAdapter(getActivity(),reviewList);
         getReviewAsync();
 
