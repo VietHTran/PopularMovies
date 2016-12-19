@@ -50,12 +50,12 @@ public class DetailsFragment extends Fragment {
     public DetailsFragment() {
     }
     private void getTrailerAsync() {
-        if (trailerList.size()==0) return;
+        if (trailerList.size()!=0 || movieId==0) return;
         FetchTrailersTask ftt= new FetchTrailersTask();
         ftt.execute(Integer.toString(movieId));
     }
     private void getReviewAsync () {
-        if (reviewList.size()==0) return;
+        if (reviewList.size()!=0 || movieId==0) return;
         FetchReviewsTask frt= new FetchReviewsTask();
         frt.execute(Integer.toString(movieId));
     }

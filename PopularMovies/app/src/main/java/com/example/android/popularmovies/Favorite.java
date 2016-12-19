@@ -1,5 +1,7 @@
 package com.example.android.popularmovies;
 
+import android.content.SharedPreferences;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +12,7 @@ public class Favorite {
     public static HashMap<Integer,Poster> favorites;
     public static ArrayList<Poster> favoriteList;
     public Favorite(){
+
         favorites= new HashMap<Integer,Poster>();
         favoriteList= new ArrayList<Poster>();
     }

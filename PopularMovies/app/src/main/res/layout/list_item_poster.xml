@@ -5,8 +5,6 @@
     android:layout_alignParentTop="true"
     android:layout_centerHorizontal="true"
     android:adjustViewBounds="true"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp"
     android:id="@+id/list_item_poster_imageview">
 </ImageView>
 <!--

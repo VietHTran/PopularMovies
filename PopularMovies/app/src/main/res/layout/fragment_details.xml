@@ -146,6 +146,7 @@
                 android:padding="10dp"
                 android:id="@+id/details_review">
             </ListView>
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
