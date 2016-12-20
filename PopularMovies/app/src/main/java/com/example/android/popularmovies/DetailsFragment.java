@@ -46,16 +46,17 @@ public class DetailsFragment extends Fragment {
     private TrailerAdapter mTrailerAdapter;
     private ArrayList<Review> reviewList;
     private ReviewAdapter mReviewAdapter;
+    private static View mRoot;
 
     public DetailsFragment() {
     }
     private void getTrailerAsync() {
-        if (trailerList.size()!=0 || movieId==0) return;
+        if (movieId==0) return;
         FetchTrailersTask ftt= new FetchTrailersTask();
         ftt.execute(Integer.toString(movieId));
     }
     private void getReviewAsync () {
-        if (reviewList.size()!=0 || movieId==0) return;
+        if (movieId==0) return;
         FetchReviewsTask frt= new FetchReviewsTask();
         frt.execute(Integer.toString(movieId));
     }
@@ -66,6 +67,31 @@ public class DetailsFragment extends Fragment {
         return (xlarge || large);
     }
 
+    public static DetailsFragment newInstance() {
+
+        Bundle args = new Bundle();
+        args.putParcelable("poster",currentPoster);
+        DetailsFragment fragment = new DetailsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public void changeMovie() {
+        if (mRoot==null) return;
+
+    }
+
+    public Poster getShownPoster() {
+        return getArguments().getParcelable("poster");
+    }
+    @Override
+    public void onCreate(Bundle args) {
+        super.onCreate(args);
+        Intent intent=getActivity().getIntent();
+        if (intent==null || intent.getData()==null) {
+            return;
+        }
+    }
     //Save downloaded data in case of rotations
     @Override
     public void onSaveInstanceState(Bundle bundle) {
@@ -74,56 +100,70 @@ public class DetailsFragment extends Fragment {
         super.onSaveInstanceState(bundle);
     }
 
+    public void updateContent() {
+        if (mRoot==null || currentPoster==null) return;
+        View view=mRoot.findViewById(R.id.fragment_detail_linear_layout);
+        view.setVisibility(View.VISIBLE);
+        movieId=currentPoster.movieId;
+        ImageView poster= (ImageView) mRoot.findViewById(R.id.details_poster);
+        TextView title=(TextView) mRoot.findViewById(R.id.details_title);
+        TextView plot=(TextView) mRoot.findViewById(R.id.details_plot);
+        TextView ratingView=(TextView) mRoot.findViewById(R.id.details_rating);
+        TextView date=(TextView) mRoot.findViewById(R.id.details_release_date);
+        final Button addFavorite=(Button) mRoot.findViewById(R.id.details_add_favorite);
+        Picasso.with(getActivity()).load(currentPoster.picUrl).into(poster);
+        Log.d("test","thisispicurl "+currentPoster.picUrl);
+        title.setText(currentPoster.title);
+        plot.setText(currentPoster.plot);
+        ratingView.setText(currentPoster.rating);
+        date.setText(currentPoster.releaseDate.substring(0,4));
+
+        movieId=currentPoster.movieId;
+        //Log.v("test","thisismovieid "+intent.getIntExtra(getString(R.string.fragment_id),0));
+
+        addFavorite.setText(Favorite.favorites.containsKey(movieId)?
+                getString(R.string.details_remove_favorite) :
+                getString(R.string.details_add_favorite));
+        addFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Favorite.favorites.containsKey(movieId)) {
+                    Favorite.favoriteList.remove(currentPoster);
+                    Favorite.favorites.remove(movieId);
+                    addFavorite.setText(getString(R.string.details_add_favorite));
+                } else {
+                    Favorite.favoriteList.add(currentPoster);
+                    Favorite.favorites.put(movieId,currentPoster);
+                    addFavorite.setText(getString(R.string.details_remove_favorite));
+                }
+            }
+        });
+        if (MainActivity.mTwoPane) {
+            getTrailerAsync();
+            getReviewAsync();
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root= inflater.inflate(R.layout.fragment_details, container, false);
+        mRoot= inflater.inflate(R.layout.fragment_details, container, false);
+        View view=mRoot.findViewById(R.id.fragment_detail_linear_layout);
+        view.setVisibility(View.GONE);
         Intent intent=getActivity().getIntent();
-        ImageView poster= (ImageView) root.findViewById(R.id.details_poster);
-        TextView title=(TextView) root.findViewById(R.id.details_title);
-        TextView plot=(TextView) root.findViewById(R.id.details_plot);
-        TextView ratingView=(TextView) root.findViewById(R.id.details_rating);
-        TextView date=(TextView) root.findViewById(R.id.details_release_date);
-        final Button addFavorite=(Button) root.findViewById(R.id.details_add_favorite);
 
         if (intent!=null) {
-            Picasso.with(getActivity()).load(intent.getStringExtra(getString(R.string.fragment_pic_url))).into(poster);
-            title.setText(intent.getStringExtra(getString(R.string.fragment_title)));
-            plot.setText(intent.getStringExtra(getString(R.string.fragment_plot)));
-            ratingView.setText(intent.getStringExtra(getString(R.string.fragment_rating)));
-            date.setText(intent.getStringExtra(getString(R.string.fragment_release_date)).substring(0,4));
-
-            movieId=intent.getIntExtra(getString(R.string.fragment_id),0);
-            //Log.v("test","thisismovieid "+intent.getIntExtra(getString(R.string.fragment_id),0));
-
-            addFavorite.setText(Favorite.favorites.containsKey(movieId)?
-                    getString(R.string.details_remove_favorite) :
-                    getString(R.string.details_add_favorite));
-            addFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (Favorite.favorites.containsKey(movieId)) {
-                        Favorite.favoriteList.remove(currentPoster);
-                        Favorite.favorites.remove(movieId);
-                        addFavorite.setText(getString(R.string.details_add_favorite));
-                    } else {
-                        Favorite.favoriteList.add(currentPoster);
-                        Favorite.favorites.put(movieId,currentPoster);
-                        addFavorite.setText(getString(R.string.details_remove_favorite));
-                    }
-                }
-            });
+            updateContent();
             //If not tablet then set the layout orientation to vertical for the sake of readability
             if (!isTablet(getActivity())) {
-                LinearLayout layout=(LinearLayout) root.findViewById(R.id.details_data);
+                LinearLayout layout=(LinearLayout) mRoot.findViewById(R.id.details_data);
                 layout.setOrientation(LinearLayout.VERTICAL);
             }
         } else {
-            title.setText("???");
-            plot.setText("???");
-            ratingView.setText("???");
-            date.setText("???");
+//            title.setText("???");
+//            plot.setText("???");
+//            ratingView.setText("???");
+//            date.setText("???");
             movieId=0;
         }
 
@@ -140,7 +180,7 @@ public class DetailsFragment extends Fragment {
         mTrailerAdapter= new TrailerAdapter(getActivity(),trailerList);
         getTrailerAsync();
 
-        ListView trailersView = (ListView) root.findViewById(R.id.details_trailer);
+        ListView trailersView = (ListView) mRoot.findViewById(R.id.details_trailer);
         trailersView.setAdapter(mTrailerAdapter);
         trailersView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
@@ -153,9 +193,9 @@ public class DetailsFragment extends Fragment {
         mReviewAdapter= new ReviewAdapter(getActivity(),reviewList);
         getReviewAsync();
 
-        ListView reviewView = (ListView) root.findViewById(R.id.details_review);
+        ListView reviewView = (ListView) mRoot.findViewById(R.id.details_review);
         reviewView.setAdapter(mReviewAdapter);
-        return root;
+        return mRoot;
     }
     public class FetchTrailersTask extends AsyncTask<String, Void, Trailer[]> {
         private final String TEST_TAG="Testing";
@@ -172,7 +212,7 @@ public class DetailsFragment extends Fragment {
             for (int i=0;i<results.length();i++) {
                 JSONObject trailer= results.getJSONObject(i);
                 output[i]=new Trailer(trailer.getString(KEY));
-                //Log.v(TEST_TAG,"thisistrailer: "+trailer.getString(KEY));
+                //Log.d(TEST_TAG,"thisistrailer: "+trailer.getString(KEY));
             }
             return output;
         }
@@ -282,6 +322,7 @@ public class DetailsFragment extends Fragment {
             for (int i=0;i<results.length();i++) {
                 JSONObject trailer= results.getJSONObject(i);
                 output[i]=new Review(trailer.getString(AUTHOR),trailer.getString(CONTENT));
+                Log.d("test",output[i].username);
             }
             return output;
         }

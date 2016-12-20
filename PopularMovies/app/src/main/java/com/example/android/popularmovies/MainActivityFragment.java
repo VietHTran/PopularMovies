@@ -49,15 +49,17 @@ public class MainActivityFragment extends Fragment {
     private ArrayList<Poster> posterList;
     private final String POSTERS_KEY="posters";
     private String sortType;
+
+    public void onSortTypeChanged() {
+        updateMovies();
+    }
+
     private void updateMovies() {
-        sortType=getNewSortType();
+        sortType=Utility.getSortType(getActivity());
         FetchMoviesTask fmt= new FetchMoviesTask();
         fmt.execute(sortType);
     }
-    private String getNewSortType(){
-        return PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .getString(getString(R.string.pref_key_sort),getString(R.string.pref_top_rated));
-    }
+
     public MainActivityFragment() {
     }
     @Override
@@ -111,15 +113,23 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Poster poster=mPosterAdapter.getItem(position);
-                Intent intent= new Intent(getActivity(),Details.class);
-                intent.putExtra(getString(R.string.fragment_pic_url),poster.picUrl)
-                        .putExtra(getString(R.string.fragment_title),poster.title)
-                        .putExtra(getString(R.string.fragment_plot),poster.plot)
-                        .putExtra(getString(R.string.fragment_rating),poster.rating)
-                        .putExtra(getString(R.string.fragment_release_date),poster.releaseDate)
-                        .putExtra(getString(R.string.fragment_id),poster.movieId);
                 DetailsFragment.currentPoster=poster;
-                startActivity(intent);
+                Log.d("test","itemclicked: "+poster.title);
+                if (MainActivity.mTwoPane) {
+                    Log.d("test","itemclicked1");
+                    MainActivity mainActivity=(MainActivity) getActivity();
+                    mainActivity.updateDetail();
+                } else {
+                    Log.d("test","itemclicked2");
+                    Intent intent= new Intent(getActivity(),Details.class);
+                    intent.putExtra(getString(R.string.fragment_pic_url),poster.picUrl)
+                            .putExtra(getString(R.string.fragment_title),poster.title)
+                            .putExtra(getString(R.string.fragment_plot),poster.plot)
+                            .putExtra(getString(R.string.fragment_rating),poster.rating)
+                            .putExtra(getString(R.string.fragment_release_date),poster.releaseDate)
+                            .putExtra(getString(R.string.fragment_id),poster.movieId);
+                    startActivity(intent);
+                }
             }
         });
         gridView.setAdapter(mPosterAdapter);
