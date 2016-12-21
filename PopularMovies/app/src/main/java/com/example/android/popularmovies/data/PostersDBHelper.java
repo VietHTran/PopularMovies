@@ -12,7 +12,14 @@ public class PostersDBHelper extends SQLiteOpenHelper {
     public static final String LOG_TAG = PostersDBHelper.class.getSimpleName();
 
     private static final String DATABASE_NAME = "posters.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
+    public static final int INDEX_ID = 0;
+    public static final int INDEX_TITLE = 1;
+    public static final int INDEX_PLOT =2;
+    public static final int INDEX_PIC_URL = 3;
+    public static final int INDEX_RATING=4;
+    public static final int INDEX_RELEASE_DATE=5;
+    public static final int INDEX_MOVIE_ID=6;
 
     public PostersDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,8 +34,6 @@ public class PostersDBHelper extends SQLiteOpenHelper {
                 PosterContract.PosterEntry.COLUMN_PIC_URL + " TEXT NOT NULL, " +
                 PosterContract.PosterEntry.COLUMN_RATING + " TEXT NOT NULL, " +
                 PosterContract.PosterEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
-                PosterContract.PosterEntry.COLUMN_SORT_TYPE + " TEXT NOT NULL, " +
-                PosterContract.PosterEntry.COLUMN_IS_FAVORITE + " INTEGER NOT NULL, " +
                 PosterContract.PosterEntry.COLUMN_MOVIE_ID +" INTEGER NOT NULL);";
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
     }

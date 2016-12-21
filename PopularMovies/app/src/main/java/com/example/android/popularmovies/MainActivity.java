@@ -1,6 +1,8 @@
 package com.example.android.popularmovies;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,15 +13,20 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.popularmovies.data.PosterContract;
+import com.example.android.popularmovies.data.PosterProvider;
+import com.example.android.popularmovies.data.PostersDBHelper;
+
 public class MainActivity extends AppCompatActivity {
 
-    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    public static final String DETAILFRAGMENT_TAG = "DFTAG";
     public static boolean mTwoPane;
+    public static SQLiteDatabase database;
     private String mSortType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Favorite favorite= new Favorite();
+        initData();
         setContentView(R.layout.activity_main);
         if (findViewById(R.id.fragment_detail_container) != null) {
             mTwoPane = true;
@@ -35,6 +42,27 @@ public class MainActivity extends AppCompatActivity {
         mSortType=Utility.getSortType(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    private void initData(){
+        Favorite favorite= new Favorite();
+        PostersDBHelper helper=new PostersDBHelper(this);
+        database=helper.getWritableDatabase();
+        Cursor cursor=helper.getReadableDatabase().query(
+                PosterContract.PosterEntry.POSTER_TABLE,null,null,null,null,null,null);
+        if (cursor.moveToFirst()) {
+            do {
+                Poster poster= new Poster(
+                        cursor.getString(PostersDBHelper.INDEX_PIC_URL),
+                        cursor.getString(PostersDBHelper.INDEX_TITLE),
+                        cursor.getString(PostersDBHelper.INDEX_PLOT),
+                        cursor.getString(PostersDBHelper.INDEX_RATING),
+                        cursor.getString(PostersDBHelper.INDEX_RELEASE_DATE),
+                        cursor.getInt(PostersDBHelper.INDEX_MOVIE_ID)
+                );
+                Favorite.push(poster);
+            } while (cursor.moveToNext());
+        }
     }
 
     public void updateDetail() {
@@ -65,11 +93,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         String sortType=Utility.getSortType(this);
         if (sortType != null && !sortType.equals(mSortType)) {
-            MainActivityFragment ff = (MainActivityFragment)getSupportFragmentManager().findFragmentById(R.id.fragment);
-            if ( null != ff ) {
-                ff.onSortTypeChanged();
-            }
-            mSortType = sortType;
+            Utility.updateMainActivity(this);
         }
     }
 }

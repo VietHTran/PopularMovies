@@ -101,6 +101,7 @@ public class DetailsFragment extends Fragment {
     }
 
     public void updateContent() {
+        //Log.d("test","thisisupdatecontent");
         if (mRoot==null || currentPoster==null) return;
         View view=mRoot.findViewById(R.id.fragment_detail_linear_layout);
         view.setVisibility(View.VISIBLE);
@@ -112,7 +113,8 @@ public class DetailsFragment extends Fragment {
         TextView date=(TextView) mRoot.findViewById(R.id.details_release_date);
         final Button addFavorite=(Button) mRoot.findViewById(R.id.details_add_favorite);
         Picasso.with(getActivity()).load(currentPoster.picUrl).into(poster);
-        Log.d("test","thisispicurl "+currentPoster.picUrl);
+
+        //Log.d("test","thisispicurl "+currentPoster.picUrl);
         title.setText(currentPoster.title);
         plot.setText(currentPoster.plot);
         ratingView.setText(currentPoster.rating);
@@ -120,7 +122,6 @@ public class DetailsFragment extends Fragment {
 
         movieId=currentPoster.movieId;
         //Log.v("test","thisismovieid "+intent.getIntExtra(getString(R.string.fragment_id),0));
-
         addFavorite.setText(Favorite.favorites.containsKey(movieId)?
                 getString(R.string.details_remove_favorite) :
                 getString(R.string.details_add_favorite));
@@ -128,12 +129,15 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (Favorite.favorites.containsKey(movieId)) {
-                    Favorite.favoriteList.remove(currentPoster);
-                    Favorite.favorites.remove(movieId);
+                    Favorite.remove(currentPoster);
                     addFavorite.setText(getString(R.string.details_add_favorite));
+
+                    //Check if sort is favorites --> Update MainActivityFragment
+                    if (Utility.getSortType(getActivity()).equals(getString(R.string.pref_favorite))) {
+                        Utility.updateMainActivity(getActivity());
+                    }
                 } else {
-                    Favorite.favoriteList.add(currentPoster);
-                    Favorite.favorites.put(movieId,currentPoster);
+                    Favorite.push(currentPoster);
                     addFavorite.setText(getString(R.string.details_remove_favorite));
                 }
             }
@@ -155,15 +159,11 @@ public class DetailsFragment extends Fragment {
         if (intent!=null) {
             updateContent();
             //If not tablet then set the layout orientation to vertical for the sake of readability
-            if (!isTablet(getActivity())) {
-                LinearLayout layout=(LinearLayout) mRoot.findViewById(R.id.details_data);
-                layout.setOrientation(LinearLayout.VERTICAL);
-            }
+//            if (!isTablet(getActivity())) {
+//                LinearLayout layout=(LinearLayout) mRoot.findViewById(R.id.details_data);
+//                layout.setOrientation(LinearLayout.VERTICAL);
+//            }
         } else {
-//            title.setText("???");
-//            plot.setText("???");
-//            ratingView.setText("???");
-//            date.setText("???");
             movieId=0;
         }
 
